@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101828" />
+    <title>Gather · Live Meeting Poll</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Gather home"><span class="brand-mark">g</span>gather</a>
+        <div class="meeting-status"><span class="live-dot"></span><span id="connection-label">Demo meeting</span></div>
+        <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host controls <span aria-hidden="true">⌄</span></button>
+      </header>
+
+      <section class="meeting" aria-labelledby="poll-title">
+        <p class="eyebrow">MEETING ROOM · LIVE POLL</p>
+        <h1 id="poll-title">Choose your answer</h1>
+        <p class="intro">You’re in the poll. Select one option—everyone in the meeting sees the results update live.</p>
+
+        <div class="content-grid">
+          <section class="ballot" aria-label="Poll choices">
+            <p class="ballot-label">YOUR RESPONSE</p>
+            <div class="options" id="options" role="group" aria-label="Select a poll answer">
+              <button class="option" type="button" data-choice="1"><span>1</span><b>Option 1</b><i>⌘ 1</i></button>
+              <button class="option" type="button" data-choice="2"><span>2</span><b>Option 2</b><i>⌘ 2</i></button>
+              <button class="option" type="button" data-choice="3"><span>3</span><b>Option 3</b><i>⌘ 3</i></button>
+              <button class="option" type="button" data-choice="4"><span>4</span><b>Option 4</b><i>⌘ 4</i></button>
+              <button class="option" type="button" data-choice="5"><span>5</span><b>Option 5</b><i>⌘ 5</i></button>
+            </div>
+            <p class="selection-message" id="selection-message" aria-live="polite">Pick an answer to participate.</p>
+          </section>
+
+          <aside class="results-card" aria-label="Live poll results">
+            <div class="results-heading"><div><p class="ballot-label">LIVE RESULTS</p><h2>Meeting pulse</h2></div><span class="participant-count" id="participant-count">0 responses</span></div>
+            <div class="bars" id="bars" aria-live="polite"></div>
+            <p class="results-note" id="results-note">Waiting for the first response.</p>
+          </aside>
+        </div>
+      </section>
+
+      <footer><span>One shared question · Five possible answers</span><span id="round-label">Round 1</span></footer>
+    </main>
+
+    <dialog class="host-dialog" id="host-dialog" aria-labelledby="host-title">
+      <form method="dialog" class="dialog-content" id="host-form">
+        <button class="close" id="close-dialog" type="button" aria-label="Close host controls">×</button>
+        <p class="eyebrow">HOST CONTROLS</p><h2 id="host-title">Reset the live poll</h2>
+        <p>Start a fresh round for everyone in the meeting. Responses from the current round will be cleared.</p>
+        <label for="host-code">Host code</label>
+        <input id="host-code" type="password" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="Enter 6-digit code" />
+        <p class="form-error" id="form-error" aria-live="polite"></p>
+        <button class="reset-button" type="submit">Reset poll for everyone</button>
+      </form>
+    </dialog>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
