@@ -15,14 +15,15 @@
       <header class="topbar">
         <a class="brand" href="./" aria-label="Gather home"><span class="brand-mark">g</span>gather</a>
         <div class="meeting-status"><span class="live-dot"></span><span id="connection-label">Demo meeting</span></div>
-        <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host controls <span aria-hidden="true">⌄</span></button>
+        <div class="host-actions">
+          <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host sign in</button>
+          <button class="reset-mini" id="reset-poll" type="button" disabled title="Sign in as host to reset the poll">Reset poll</button>
+        </div>
       </header>
 
       <section class="meeting" aria-labelledby="poll-title">
         <p class="eyebrow">MEETING ROOM · LIVE POLL</p>
         <h1 id="poll-title">Choose your answer</h1>
-        <p class="intro">You’re in the poll. Select one option—everyone in the meeting sees the results update live.</p>
-
         <div class="content-grid">
           <section class="ballot" aria-label="Poll choices">
             <p class="ballot-label">YOUR RESPONSE</p>
@@ -31,9 +32,17 @@
               <button class="option" type="button" data-choice="2"><span>2</span><b>Option 2</b><i>⌘ 2</i></button>
               <button class="option" type="button" data-choice="3"><span>3</span><b>Option 3</b><i>⌘ 3</i></button>
               <button class="option" type="button" data-choice="4"><span>4</span><b>Option 4</b><i>⌘ 4</i></button>
-              <button class="option" type="button" data-choice="5"><span>5</span><b>Option 5</b><i>⌘ 5</i></button>
             </div>
             <p class="selection-message" id="selection-message" aria-live="polite">Pick an answer to participate.</p>
+            <section class="round-panel" aria-label="Poll round">
+              <p class="ballot-label">CURRENT ROUND</p>
+              <div class="round-row"><strong id="round-value">1</strong><span>Round</span></div>
+              <div class="round-editor">
+                <label for="round-input">Change round</label>
+                <input id="round-input" type="number" min="1" value="1" disabled />
+                <button id="save-round" type="button" disabled>Save</button>
+              </div>
+            </section>
           </section>
 
           <aside class="results-card" aria-label="Live poll results">
@@ -44,18 +53,18 @@
         </div>
       </section>
 
-      <footer><span>One shared question · Five possible answers</span><span id="round-label">Round 1</span></footer>
+      <footer><span>Created by Daniel Chen</span></footer>
     </main>
 
     <dialog class="host-dialog" id="host-dialog" aria-labelledby="host-title">
       <form method="dialog" class="dialog-content" id="host-form">
         <button class="close" id="close-dialog" type="button" aria-label="Close host controls">×</button>
-        <p class="eyebrow">HOST CONTROLS</p><h2 id="host-title">Reset the live poll</h2>
-        <p>Start a fresh round for everyone in the meeting. Responses from the current round will be cleared.</p>
+        <p class="eyebrow">HOST SIGN IN</p><h2 id="host-title">Enable host controls</h2>
+        <p>Sign in once on this browser to enable poll resets and round editing.</p>
         <label for="host-code">Host code</label>
         <input id="host-code" type="password" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="Enter 6-digit code" />
         <p class="form-error" id="form-error" aria-live="polite"></p>
-        <button class="reset-button" type="submit">Reset poll for everyone</button>
+        <button class="reset-button" type="submit">Sign in as host</button>
       </form>
     </dialog>
     <script type="module" src="app.js"></script>
