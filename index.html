@@ -18,6 +18,7 @@
         <div class="host-actions">
           <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host sign in</button>
           <button class="reset-mini" id="reset-poll" type="button" disabled title="Sign in as host to reset the poll">Reset poll</button>
+          <button class="toggle-results" id="toggle-results" type="button" hidden>Hide results</button>
         </div>
       </header>
 
@@ -34,6 +35,13 @@
               <button class="option" type="button" data-choice="4"><span>4</span><b>Option 4</b><i>⌘ 4</i></button>
             </div>
             <p class="selection-message" id="selection-message" aria-live="polite">Pick an answer to participate.</p>
+            <section class="host-editor" id="host-editor" hidden>
+              <p class="ballot-label">HOST POLL EDITOR</p>
+              <label for="poll-text">Paste five lines: question, then four options</label>
+              <textarea id="poll-text" rows="6" placeholder="What should we discuss first?&#10;Introductions&#10;The main topic&#10;Questions&#10;Next steps"></textarea>
+              <p class="form-error" id="poll-text-error" aria-live="polite"></p>
+              <button id="confirm-poll" type="button">Confirm new poll</button>
+            </section>
             <section class="round-panel" aria-label="Poll round">
               <p class="ballot-label">CURRENT ROUND</p>
               <div class="round-row"><strong id="round-value">1</strong><span>Round</span></div>
@@ -46,14 +54,15 @@
           </section>
 
           <aside class="results-card" aria-label="Live poll results">
-            <div class="results-heading"><div><p class="ballot-label">LIVE RESULTS</p><h2>Meeting pulse</h2></div><span class="participant-count" id="participant-count">0 responses</span></div>
-            <div class="bars" id="bars" aria-live="polite"></div>
-            <p class="results-note" id="results-note">Waiting for the first response.</p>
+            <div id="results-content"><div class="results-heading"><div><p class="ballot-label">LIVE RESULTS</p><h2>Meeting pulse</h2></div><span class="participant-count" id="participant-count">0 responses</span></div>
+              <div class="bars" id="bars" aria-live="polite"></div>
+              <p class="results-note" id="results-note">Waiting for the first response.</p></div>
+            <p class="results-hidden-message" id="results-hidden-message" hidden>The host will reveal the results soon.</p>
           </aside>
         </div>
       </section>
 
-      <footer><span>Created by Daniel Chen</span></footer>
+      <footer><span>Created by Daniel Chen</span><span id="online-count">1 participant online</span></footer>
     </main>
 
     <dialog class="host-dialog" id="host-dialog" aria-labelledby="host-title">
