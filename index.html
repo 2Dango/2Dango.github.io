@@ -18,6 +18,7 @@
         <div class="host-actions">
           <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host sign in</button>
           <button class="reset-mini" id="reset-poll" type="button" disabled title="Sign in as host to reset the poll">Reset poll</button>
+          <button class="change-round" id="change-round" type="button" hidden>Change round</button>
           <button class="toggle-results" id="toggle-results" type="button" hidden>Hide results</button>
         </div>
       </header>
@@ -27,7 +28,7 @@
         <h1 id="poll-title">Choose your answer</h1>
         <div class="content-grid">
           <section class="ballot" aria-label="Poll choices">
-            <p class="ballot-label">YOUR RESPONSE</p>
+            <div class="ballot-heading"><p class="ballot-label">YOUR RESPONSE</p><span id="elapsed-timer">Not started</span></div>
             <div class="options" id="options" role="group" aria-label="Select a poll answer">
               <button class="option" type="button" data-choice="1"><span>1</span><b>Option 1</b><i>⌘ 1</i></button>
               <button class="option" type="button" data-choice="2"><span>2</span><b>Option 2</b><i>⌘ 2</i></button>
@@ -38,18 +39,13 @@
             <section class="host-editor" id="host-editor" hidden>
               <p class="ballot-label">HOST POLL EDITOR</p>
               <label for="poll-text">Paste five lines: question, then four options</label>
-              <textarea id="poll-text" rows="6" placeholder="What should we discuss first?&#10;Introductions&#10;The main topic&#10;Questions&#10;Next steps"></textarea>
+              <textarea id="poll-text" rows="6" placeholder="Question&#10;Option 1&#10;Option 2&#10;Option 3&#10;Option 4"></textarea>
               <p class="form-error" id="poll-text-error" aria-live="polite"></p>
               <button id="confirm-poll" type="button">Confirm new poll</button>
             </section>
             <section class="round-panel" aria-label="Poll round">
               <p class="ballot-label">CURRENT ROUND</p>
-              <div class="round-row"><strong id="round-value">1</strong><span>Round</span></div>
-              <div class="round-editor">
-                <label for="round-input">Change round</label>
-                <input id="round-input" type="number" min="1" value="1" disabled />
-                <button id="save-round" type="button" disabled>Save</button>
-              </div>
+              <div class="round-row"><span id="round-value">Round 1</span></div>
             </section>
           </section>
 
