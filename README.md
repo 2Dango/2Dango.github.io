@@ -4,7 +4,7 @@ A static, GitHub Pages-ready meeting poll with four answer buttons and a live ba
 
 ## Publish on GitHub Pages
 
-1. Put these files in a GitHub repository and push them to the `main` branch.
+1. Put these files in a GitHub repository and push them to the `main` branch: `index.html`, `participant.html`, `host.html`, `styles.css`, and `app.js`.
 2. In the repository, open **Settings → Pages**, choose **Deploy from a branch**, then select `main` and the `/ (root)` folder.
 3. Open the URL GitHub provides.
 
