@@ -15,25 +15,34 @@ const HOST_CODE = "123456";
 
 const $ = (selector) => document.querySelector(selector);
 const options = [...document.querySelectorAll(".option")];
-const initialPoll = { round: 1, question: "Choose your answer", options: ["Option 1", "Option 2", "Option 3", "Option 4"], showResults: true, startedAt: null, responses: {}, presence: {} };
+const initialPoll = { round: 1, question: "Choose your answer", options: ["Option 1", "Option 2", "Option 3", "Option 4"], correctAnswer: null, answerRevealed: false, showResults: true, startedAt: null, responses: {}, presence: {} };
 let poll = initialPoll;
 let participantId = localStorage.getItem("gather-participant-id") || crypto.randomUUID();
-let isHost = localStorage.getItem("gather-host-signed-in") === "true";
+let hostSignedIn = localStorage.getItem("gather-host-signed-in") === "true";
+let isHost = false;
 localStorage.setItem("gather-participant-id", participantId);
 
 function normalize(data) { return { ...initialPoll, ...data, responses: data?.responses || {}, presence: data?.presence || {}, options: data?.options || initialPoll.options }; }
 function tally() { const values = Object.values(poll.responses); return [1, 2, 3, 4].map(choice => values.filter(v => String(v) === String(choice)).length); }
 function renderHostControls() {
-  $("#host-trigger").textContent = isHost ? "Host signed in" : "Host sign in";
+  $("#host-actions").hidden = !isHost;
+  $("#host-trigger").textContent = "Host signed in";
   $("#reset-poll").disabled = !isHost;
   $("#reset-poll").title = isHost ? "Start a new poll round" : "Sign in as host to reset the poll";
-  $("#host-editor").hidden = !isHost; $("#toggle-results").hidden = !isHost; $("#change-round").hidden = !isHost;
+  $("#host-editor").hidden = !isHost; $("#toggle-results").hidden = !isHost; $("#change-round").hidden = !isHost; $("#reveal-answer").hidden = !isHost;
   $("#toggle-results").textContent = poll.showResults === false ? "Show results" : "Hide results";
+  $("#reveal-answer").disabled = poll.answerRevealed; $("#reveal-answer").textContent = poll.answerRevealed ? "Answer revealed" : "Reveal answer";
 }
 function render() {
   const counts = tally(), total = counts.reduce((a, b) => a + b, 0), selection = poll.responses[participantId];
   options.forEach(button => button.classList.toggle("selected", button.dataset.choice === String(selection)));
   $("#selection-message").textContent = selection ? `Your response: ${selection}. You can change it anytime.` : "Pick an answer to participate.";
+  const feedback = $("#answer-feedback");
+  if (poll.answerRevealed && poll.correctAnswer) {
+    const correct = String(selection) === String(poll.correctAnswer);
+    feedback.hidden = false; feedback.classList.toggle("incorrect", !correct);
+    feedback.textContent = selection ? `Correct answer: ${poll.correctAnswer}. You were ${correct ? "correct" : "incorrect"}.` : `Correct answer: ${poll.correctAnswer}. You did not answer.`;
+  } else feedback.hidden = true;
   $("#participant-count").textContent = `${total} / ${Math.max(1, Object.keys(poll.presence).length)} participants`;
   $("#results-note").textContent = total ? "Results update as everyone answers." : "Waiting for the first response.";
   $("#round-value").textContent = `Round ${poll.round}`;
@@ -59,7 +68,7 @@ function startDemo() {
   window.addEventListener("storage", event => { if (event.key === "gather-demo-poll") { poll = normalize(JSON.parse(event.newValue)); render(); } });
   $("#connection-label").textContent = "Demo meeting · this browser";
   poll.presence[participantId] = true; saveDemo();
-  return { vote(choice) { poll.responses[participantId] = choice; saveDemo(); }, reset() { poll.responses = {}; saveDemo(); }, setRound(round) { poll.round = round; saveDemo(); }, setPoll(question, options) { Object.assign(poll, { question, options, startedAt: Date.now(), round: poll.round + 1, responses: {} }); saveDemo(); }, setResultsVisible(showResults) { poll.showResults = showResults; saveDemo(); } };
+  return { vote(choice) { poll.responses[participantId] = choice; saveDemo(); }, reset() { poll.responses = {}; saveDemo(); }, setRound(round) { poll.round = round; saveDemo(); }, setPoll(question, options, correctAnswer) { Object.assign(poll, { question, options, correctAnswer, answerRevealed: false, startedAt: Date.now(), round: poll.round + 1, responses: {} }); saveDemo(); }, setResultsVisible(showResults) { poll.showResults = showResults; saveDemo(); }, revealAnswer() { poll.answerRevealed = true; saveDemo(); } };
 }
 
 async function startFirebase() {
@@ -76,8 +85,9 @@ async function startFirebase() {
     vote(choice) { return update(ref(db, `${POLL_PATH}/responses`), { [participantId]: choice }); },
     reset() { return set(ref(db, `${POLL_PATH}/responses`), {}); },
     setRound(round) { return update(pollRef, { round }); },
-    setPoll(question, options) { return update(pollRef, { question, options, startedAt: Date.now(), round: (poll.round || 1) + 1, responses: {} }); },
-    setResultsVisible(showResults) { return update(pollRef, { showResults }); }
+    setPoll(question, options, correctAnswer) { return update(pollRef, { question, options, correctAnswer, answerRevealed: false, startedAt: Date.now(), round: (poll.round || 1) + 1, responses: {} }); },
+    setResultsVisible(showResults) { return update(pollRef, { showResults }); },
+    revealAnswer() { return update(pollRef, { answerRevealed: true }); }
   };
 }
 
@@ -87,12 +97,17 @@ options.forEach(button => button.addEventListener("click", () => service.vote(bu
 renderHostControls();
 
 const dialog = $("#host-dialog");
-$("#host-trigger").addEventListener("click", () => { $("#host-code").value = ""; $("#form-error").textContent = ""; dialog.showModal(); setTimeout(() => $("#host-code").focus(), 0); });
+function openHostDialog() { $("#host-code").value = ""; $("#form-error").textContent = ""; dialog.showModal(); setTimeout(() => $("#host-code").focus(), 0); }
+function showPoll() { $("#home-screen").hidden = true; $("#poll-screen").hidden = false; render(); }
+$("#join-participant").addEventListener("click", () => { isHost = false; showPoll(); });
+$("#join-host").addEventListener("click", () => { if (hostSignedIn) { isHost = true; showPoll(); } else openHostDialog(); });
+$("#host-trigger").addEventListener("click", openHostDialog);
 $("#close-dialog").addEventListener("click", () => dialog.close());
-$("#host-form").addEventListener("submit", event => { event.preventDefault(); if ($("#host-code").value !== HOST_CODE) { $("#form-error").textContent = "That host code isn’t correct."; return; } isHost = true; localStorage.setItem("gather-host-signed-in", "true"); renderHostControls(); dialog.close(); });
+$("#host-form").addEventListener("submit", event => { event.preventDefault(); if ($("#host-code").value !== HOST_CODE) { $("#form-error").textContent = "That host code isn’t correct."; return; } hostSignedIn = true; isHost = true; localStorage.setItem("gather-host-signed-in", "true"); dialog.close(); showPoll(); });
 $("#reset-poll").addEventListener("click", () => { if (isHost) service.reset(); });
 $("#change-round").addEventListener("click", () => { const next = window.prompt("Set round number", String(poll.round)); const round = Number.parseInt(next, 10); if (isHost && Number.isInteger(round) && round > 0) service.setRound(round); });
-$("#confirm-poll").addEventListener("click", () => { const lines = $("#poll-text").value.split(/\r?\n/).map(line => line.trim()).filter(Boolean); if (lines.length !== 5) { $("#poll-text-error").textContent = "Enter exactly five non-empty lines: one question and four options."; return; } $("#poll-text-error").textContent = ""; service.setPoll(lines[0], lines.slice(1)); $("#poll-text").value = ""; });
+$("#confirm-poll").addEventListener("click", () => { const lines = $("#poll-text").value.split(/\r?\n/).map(line => line.trim()).filter(Boolean); if (lines.length !== 6 || !["1", "2", "3", "4"].includes(lines[5])) { $("#poll-text-error").textContent = "Enter six non-empty lines; the final line must be 1, 2, 3, or 4."; return; } $("#poll-text-error").textContent = ""; service.setPoll(lines[0], lines.slice(1, 5), lines[5]); $("#poll-text").value = ""; });
 $("#toggle-results").addEventListener("click", () => { if (isHost) service.setResultsVisible(poll.showResults === false); });
+$("#reveal-answer").addEventListener("click", () => { if (isHost && !poll.answerRevealed) service.revealAnswer(); });
 document.addEventListener("keydown", event => { if (!dialog.open && ["1", "2", "3", "4"].includes(event.key) && !event.metaKey && !event.ctrlKey) service.vote(event.key); });
 renderElapsedTimer(); setInterval(renderElapsedTimer, 1000);

@@ -1,6 +1,6 @@
 # Gather live meeting poll
 
-A static, GitHub Pages-ready meeting poll with four answer buttons and a live bar chart. Each browser receives a stored participant ID and is placed directly into the poll. Enter `123456` once in the host sign-in menu to enable reset, round editing, question editing, and result visibility controls on that browser.
+A static, GitHub Pages-ready meeting poll with four answer buttons and a live bar chart. Visitors first choose to join as a participant or sign in as host. Hosts enter `123456` once per browser, then can reset polls, edit rounds, publish a six-line question (question, four options, and correct answer), hide results, and reveal the answer.
 
 ## Publish on GitHub Pages
 

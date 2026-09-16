@@ -12,14 +12,28 @@
   </head>
   <body>
     <main class="app-shell">
+      <section class="home-screen" id="home-screen">
+        <div class="home-card">
+          <a class="brand" href="./" aria-label="Gather home"><span class="brand-mark">g</span>gather</a>
+          <p class="eyebrow">LIVE MEETING POLL</p>
+          <h1>Join the conversation.</h1>
+          <p>Choose how you would like to enter the meeting.</p>
+          <div class="home-actions">
+            <button class="join-button" id="join-participant" type="button">Join as participant</button>
+            <button class="host-home-button" id="join-host" type="button">Sign in as host</button>
+          </div>
+        </div>
+      </section>
+      <div id="poll-screen" hidden>
       <header class="topbar">
         <a class="brand" href="./" aria-label="Gather home"><span class="brand-mark">g</span>gather</a>
         <div class="meeting-status"><span class="live-dot"></span><span id="connection-label">Demo meeting</span></div>
-        <div class="host-actions">
+        <div class="host-actions" id="host-actions">
           <button class="host-trigger" id="host-trigger" type="button" aria-haspopup="dialog">Host sign in</button>
           <button class="reset-mini" id="reset-poll" type="button" disabled title="Sign in as host to reset the poll">Reset poll</button>
           <button class="change-round" id="change-round" type="button" hidden>Change round</button>
           <button class="toggle-results" id="toggle-results" type="button" hidden>Hide results</button>
+          <button class="reveal-answer" id="reveal-answer" type="button" hidden>Reveal answer</button>
         </div>
       </header>
 
@@ -36,10 +50,11 @@
               <button class="option" type="button" data-choice="4"><span>4</span><b>Option 4</b><i>⌘ 4</i></button>
             </div>
             <p class="selection-message" id="selection-message" aria-live="polite">Pick an answer to participate.</p>
+            <p class="answer-feedback" id="answer-feedback" aria-live="polite" hidden></p>
             <section class="host-editor" id="host-editor" hidden>
               <p class="ballot-label">HOST POLL EDITOR</p>
-              <label for="poll-text">Paste five lines: question, then four options</label>
-              <textarea id="poll-text" rows="6" placeholder="Question&#10;Option 1&#10;Option 2&#10;Option 3&#10;Option 4"></textarea>
+              <label for="poll-text">Paste six lines: question, four options, then the correct answer (1–4)</label>
+              <textarea id="poll-text" rows="7" placeholder="Question&#10;Option 1&#10;Option 2&#10;Option 3&#10;Option 4&#10;1"></textarea>
               <p class="form-error" id="poll-text-error" aria-live="polite"></p>
               <button id="confirm-poll" type="button">Confirm new poll</button>
             </section>
@@ -59,6 +74,7 @@
       </section>
 
       <footer><span>Created by Daniel Chen</span><span id="online-count">1 participant online</span></footer>
+      </div>
     </main>
 
     <dialog class="host-dialog" id="host-dialog" aria-labelledby="host-title">
